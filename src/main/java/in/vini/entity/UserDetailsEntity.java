@@ -19,7 +19,7 @@ public class UserDetailsEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer userId;
 	private String userName;
-	private String mail;
+	private String email;
 	private Long phno;
 	private String pwd;
 	private String accStatus;

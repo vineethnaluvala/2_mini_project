@@ -6,7 +6,7 @@ import lombok.Data;
 public class SignUpForm {
 
 	private String userName;
-	private String mail;
+	private String email;
 	private Long phno;
 
 }

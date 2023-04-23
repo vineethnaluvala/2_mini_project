@@ -37,17 +37,17 @@ public class StudentEnquiriesEntity {
 	 * @JoinColumn(name = "userId") private Integer userId;
 	 */
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userId")
-    private UserDetailsEntity user;
+	/*
+	 * @ManyToOne(fetch = FetchType.LAZY)
+	 * 
+	 * @JoinColumn(name = "userId")
+	 */
+	@ManyToOne(targetEntity = UserDetailsEntity.class)
+    private Integer user;
 
-    // Getters and setters
-    public UserDetailsEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserDetailsEntity user) {
-        this.user = user;
-    }
 
 }
+
+
+
+

@@ -11,17 +11,17 @@ import org.springframework.stereotype.Component;
 public class EmailUtils {
 
 	@Autowired
-	private JavaMailSender mail;
+	private JavaMailSender email;
 
 	public boolean sendEmail(String to, String subject, String body) {
 		boolean isSent = false;
 		try {
-			MimeMessage mimeMessage = mail.createMimeMessage();
-			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
+			MimeMessage mimeMessage = email.createMimeMessage();
+			MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,true);
 			helper.setTo(to);
 			helper.setSubject(subject);
 			helper.setText(body, true);
-
+			email.send(mimeMessage);
 			isSent = true;
 		} catch (Exception e) {
 			e.printStackTrace();

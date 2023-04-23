@@ -6,5 +6,7 @@ import in.vini.entity.UserDetailsEntity;
 
 public interface UserDetailsRepository extends JpaRepository<UserDetailsEntity, Integer>{
 
-	public UserDetailsEntity findByMail(String mail);
+	public UserDetailsEntity findByEmail(String email);
+	
+	public UserDetailsEntity findByEmailAndPwd(String email, String pwd);
 }

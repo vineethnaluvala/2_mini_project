@@ -6,8 +6,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import in.vini.binding.LoginForm;
 import in.vini.binding.SignUpForm;
+import in.vini.binding.UnlockForm;
 import in.vini.services.UserService;
 
 @Controller
@@ -17,11 +20,25 @@ public class UserController {
 	private UserService service;
 
 	@GetMapping("/login")
-	public String login() {
+	public String login(Model model) {
+
+		model.addAttribute("loginForm", new LoginForm());
+
 		return "login";
 	}
 
-	
+	@PostMapping("/login")
+	public String loginUser(@ModelAttribute("loginForm") LoginForm loginForm, Model model) {
+
+		String loginUser = service.loginUser(loginForm);
+
+		if (loginUser.contains("login succesfull")) {
+			return "redirect:/dashboard";
+		}
+		model.addAttribute("errmsg", loginUser);
+		return "login";
+
+	}
 
 	@PostMapping("/signup")
 	public String hadleSignUp(@ModelAttribute("user") SignUpForm form, Model model) {
@@ -39,9 +56,38 @@ public class UserController {
 		model.addAttribute("user", new SignUpForm());
 		return "signUp";
 	}
-	
+
 	@GetMapping("/unlock")
-	public String unlockPage() {
+	public String unlockPage(@RequestParam String email, Model model) {
+
+		UnlockForm form = new UnlockForm();
+		form.setEmail(email);
+		model.addAttribute("unlock", form);
+
+		return "unlock";
+	}
+
+	@PostMapping("/unlock")
+	public String unlockAccount(@ModelAttribute("unlock") UnlockForm unlockForm, Model model) {
+
+		// System.out.println(unlockForm);
+
+		if (unlockForm.getPwd().equals(unlockForm.getCpwd())) {
+
+			boolean unlockAccount = service.unlockAccount(unlockForm);
+
+			if (unlockAccount) {
+				model.addAttribute("msg", "unlock success,please login");
+			} else {
+				model.addAttribute("errmsg", "given temp password is incorrect");
+
+			}
+
+		} else {
+			model.addAttribute("errmsg", "both password and confirm password should be same...");
+
+		}
+
 		return "unlock";
 	}
 

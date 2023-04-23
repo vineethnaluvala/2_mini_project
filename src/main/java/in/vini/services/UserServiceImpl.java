@@ -20,15 +20,15 @@ public class UserServiceImpl implements UserService {
 
 	@Autowired
 	private EmailUtils utils;
-	
+
 	public boolean registerUser(SignUpForm signUpForm) {
 
-		UserDetailsEntity user = repo.findByMail(signUpForm.getMail());
-		
-		if(user!=null) {
+		UserDetailsEntity user = repo.findByEmail(signUpForm.getEmail());
+
+		if (user != null) {
 			return false;
 		}
-		
+
 		UserDetailsEntity entity = new UserDetailsEntity();
 
 		BeanUtils.copyProperties(signUpForm, entity);
@@ -40,26 +40,49 @@ public class UserServiceImpl implements UserService {
 
 		repo.save(entity);
 
-		String to = signUpForm.getMail();
+		String to = signUpForm.getEmail();
 		String subject = "unlock your account | Ashok IT";
 		StringBuffer body = new StringBuffer("");
 		body.append("<h1>use below temparory password to unlock your account</h1>");
-		body.append("temparory password : "+ tempPwd);
-		body.append("</br>");
-		body.append("<a href = \"http:localhost:8088/unlock?email="+to+"\">click here to unlock your account</a>");
-				
+		body.append("temparory password : " + tempPwd);
+		body.append("<br/>");
+		body.append("<a href =\"http://localhost:8088/unlock?email=" + to + "\">click here to unlock your account</a>");
+
 		utils.sendEmail(to, subject, body.toString());
 		return true;
 	}
 
 	public String loginUser(LoginForm loginForm) {
 
-		return null;
+		UserDetailsEntity entity = repo.findByEmailAndPwd(loginForm.getUsername(), loginForm.getPassword());
+
+		if (entity == null) {
+			return "invalid credentials";
+		}
+		if (entity.getAccStatus().equals("locked")) {
+			return "your account is locked";
+		}
+
+		return "login succesfull";
 	}
 
 	public boolean unlockAccount(UnlockForm unlockForm) {
 
-		return false;
+		UserDetailsEntity entity = repo.findByEmail(unlockForm.getEmail());
+
+		if (entity.getPwd().equals(unlockForm.getTempPwd())) {
+
+			entity.setAccStatus("UNLOCKED");
+
+			entity.setPwd(unlockForm.getCpwd());
+
+			repo.save(entity);
+
+			return true;
+		} else {
+
+			return false;
+		}
 
 	}
 

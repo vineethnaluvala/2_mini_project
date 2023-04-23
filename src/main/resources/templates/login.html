@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="www.thymeleaf.org">
 
 <head>
 <meta charset="UTF-8" />
@@ -82,33 +82,36 @@
 										<h4 class="mt-1 mb-5 pb-1"></h4>
 									</div>
 
-									<form>
+
+
+									<p th:text="${msg}" class="text-success">
+									<p th:text="${errmsg}" class="text-danger">
+									<form th:action="@{/login}" th:object="${loginForm}" method="post">
 										<p>Please login to your account</p>
 
 										<div class="form-outline mb-4">
 											<input type="email" id="form2Example11" class="form-control"
-												placeholder="email address" /> <label
+												placeholder="email address" th:field="*{username}" /> <label
 												class="form-label" for="form2Example11">Username</label>
 										</div>
 
 										<div class="form-outline mb-4">
 											<input type="password" id="form2Example22"
-												class="form-control" /> <label class="form-label"
-												for="form2Example22">Password</label>
+												class="form-control" th:field="*{password}" /> <label
+												class="form-label" for="form2Example22">Password</label>
 										</div>
 
 										<div class="text-center pt-1 mb-5 pb-1">
-											<a href="dashboard"
-												class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3"
-												type="button">Log in</a>
+											<input type="submit" value="login"
+												class="btn btn-primary btn-block fa-lg gradient-custom-2 mb-3" /></a>
 											<a class="text-muted" href="forgot">Forgot password?</a>
 										</div>
 
 										<div
 											class="d-flex align-items-center justify-content-center pb-4">
 											<p class="mb-0 me-2">Don't have an account?</p>
-											<a href="signup" type="button"
-												class="btn btn-outline-danger">Create New</a>
+											<a href="signup" type="button" class="btn btn-outline-danger">Create
+												New</a>
 										</div>
 
 									</form>
