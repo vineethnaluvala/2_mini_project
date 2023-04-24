@@ -93,6 +93,34 @@ public class UserController {
 
 	@GetMapping("/forgot")
 	public String forgotPwdPage() {
+
 		return "forgotPwd";
 	}
+
+	@PostMapping("/forgot")
+	public String forgotPage(@RequestParam("email") String email, Model model) {
+
+		boolean status = service.forgotPassword(email);
+		
+		if(status) {
+			model.addAttribute("msg","password sent to your email");
+		}else {
+			model.addAttribute("errMsg","invalid email id");
+		}
+		return "forgotPwd";
+
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

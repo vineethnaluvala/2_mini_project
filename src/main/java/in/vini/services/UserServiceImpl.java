@@ -86,10 +86,37 @@ public class UserServiceImpl implements UserService {
 
 	}
 
-	public String forgotPassword(String email) {
+	public boolean forgotPassword(String email) {
+		
+		UserDetailsEntity entity = repo.findByEmail(email);
+		
+		if(entity==null) {
+			return false;
+		}
+		
+		String subject = "recover password";
+		String body = "your password is : " + entity.getPwd();
 
-		return email;
+		utils.sendEmail(email, subject, body);
+		
+		return true;
 
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
