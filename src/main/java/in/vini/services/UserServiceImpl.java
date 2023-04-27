@@ -1,5 +1,7 @@
 package in.vini.services;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class UserServiceImpl implements UserService {
 	private UserDetailsRepository repo;
 
 	@Autowired
+	private HttpSession session;
+	@Autowired
 	private EmailUtils utils;
 
 	public boolean registerUser(SignUpForm signUpForm) {
@@ -34,7 +38,7 @@ public class UserServiceImpl implements UserService {
 		BeanUtils.copyProperties(signUpForm, entity);
 
 		String tempPwd = PwdUtils.generatePwd();
-		entity.setPwd(tempPwd);
+		entity.setPassword(tempPwd);
 
 		entity.setAccStatus("LOCKED");
 
@@ -54,7 +58,7 @@ public class UserServiceImpl implements UserService {
 
 	public String loginUser(LoginForm loginForm) {
 
-		UserDetailsEntity entity = repo.findByEmailAndPwd(loginForm.getUsername(), loginForm.getPassword());
+		UserDetailsEntity entity = repo.findByEmailAndPassword(loginForm.getUserName(), loginForm.getPassword());
 
 		if (entity == null) {
 			return "invalid credentials";
@@ -62,6 +66,8 @@ public class UserServiceImpl implements UserService {
 		if (entity.getAccStatus().equals("locked")) {
 			return "your account is locked";
 		}
+		
+		session.setAttribute("userId", entity.getUserId());
 
 		return "login succesfull";
 	}
@@ -70,11 +76,11 @@ public class UserServiceImpl implements UserService {
 
 		UserDetailsEntity entity = repo.findByEmail(unlockForm.getEmail());
 
-		if (entity.getPwd().equals(unlockForm.getTempPwd())) {
+		if (entity.getPassword().equals(unlockForm.getTempPwd())) {
 
 			entity.setAccStatus("UNLOCKED");
 
-			entity.setPwd(unlockForm.getCpwd());
+			entity.setPassword(unlockForm.getCpwd());
 
 			repo.save(entity);
 
@@ -95,7 +101,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		String subject = "recover password";
-		String body = "your password is : " + entity.getPwd();
+		String body = "your password is : " + entity.getPassword();
 
 		utils.sendEmail(email, subject, body);
 		

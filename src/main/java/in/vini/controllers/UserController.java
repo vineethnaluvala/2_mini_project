@@ -1,4 +1,7 @@
+
 package in.vini.controllers;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +21,8 @@ public class UserController {
 
 	@Autowired
 	private UserService service;
+
+	
 
 	@GetMapping("/login")
 	public String login(Model model) {
@@ -101,26 +106,13 @@ public class UserController {
 	public String forgotPage(@RequestParam("email") String email, Model model) {
 
 		boolean status = service.forgotPassword(email);
-		
-		if(status) {
-			model.addAttribute("msg","password sent to your email");
-		}else {
-			model.addAttribute("errMsg","invalid email id");
+
+		if (status) {
+			model.addAttribute("msg", "password sent to your email");
+		} else {
+			model.addAttribute("errMsg", "invalid email id");
 		}
 		return "forgotPwd";
 
 	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

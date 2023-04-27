@@ -21,7 +21,7 @@ public class UserDetailsEntity {
 	private String userName;
 	private String email;
 	private Long phno;
-	private String pwd;
+	private String password;
 	private String accStatus;
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<StudentEnquiriesEntity> enquiries;

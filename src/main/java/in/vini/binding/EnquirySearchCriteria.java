@@ -6,6 +6,6 @@ import lombok.Data;
 public class EnquirySearchCriteria {
 
 	public String course;
-	public String enquiryStatus;
+	public String enqStatus;
 	public String classMode;
 }
