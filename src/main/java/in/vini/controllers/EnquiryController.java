@@ -4,11 +4,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -16,17 +18,22 @@ import in.vini.binding.DashboardResponse;
 import in.vini.binding.EnquiryForm;
 import in.vini.binding.EnquirySearchCriteria;
 import in.vini.entity.StudentEnquiriesEntity;
+import in.vini.repository.StudentEnquiriesRepository;
 import in.vini.services.EnquiryServiceImpl;
 import in.vini.services.UserServiceImpl;
 
 @Controller
 public class EnquiryController {
 
+	
 	@Autowired
 	private EnquiryServiceImpl enqService;
 
 	@Autowired
 	private UserServiceImpl userService;
+
+	@Autowired
+	private StudentEnquiriesRepository enqRepo;
 
 	@Autowired
 	private HttpSession session;
@@ -87,7 +94,7 @@ public class EnquiryController {
 	public String viewEnquiryPage(Model model) {
 		initForm(model);
 
-	//	model.addAttribute("searchForm", new EnquirySearchCriteria());
+		// model.addAttribute("searchForm", new EnquirySearchCriteria());
 
 		List<StudentEnquiriesEntity> enquiries = enqService.getEnquiries();
 
@@ -97,39 +104,44 @@ public class EnquiryController {
 	}
 
 	@GetMapping("/filter-enquiries")
-	public String filterEnquiry(@RequestParam String cname,@RequestParam String mode ,@RequestParam String status, Model model) {
-		
+	public String filterEnquiry(@RequestParam String cname, @RequestParam String mode, @RequestParam String status,
+			Model model) {
+
 		EnquirySearchCriteria criteria = new EnquirySearchCriteria();
-		criteria .setCourse(cname);
+		criteria.setCourse(cname);
 		criteria.setClassMode(mode);
 		criteria.setEnqStatus(status);
 
-		
 		Integer user = (Integer) session.getAttribute("userId");
 		List<StudentEnquiriesEntity> filteredEnquiries = enqService.getFilteredEnquiries(criteria, user);
-		
-		model.addAttribute("enquiries",filteredEnquiries);
+
+		model.addAttribute("enquiries", filteredEnquiries);
 		return "filterd-enquiries";
-		
+
 	}
 
-public String editEnquiry(Model model) {
-	return null;
-	
+	@GetMapping("/enqu")
+	public String enquiry(Model model)
+	{
+		initForm(model);
+		EnquiryForm enqForm=new EnquiryForm();
+		if(session.getAttribute("enq")!=null)
+		{
+		   StudentEnquiriesEntity enq = (StudentEnquiriesEntity) session.getAttribute("enq");
+		   BeanUtils.copyProperties(enq,enqForm);
+		   session.removeAttribute("enq");
+		   
+		}
+		model.addAttribute("form", enqForm);
+		return "add-enquiry";
+	}
+
+	@GetMapping("/edit/{id}")
+	public String editEnquiry(@PathVariable("id") Integer id) {
+		 StudentEnquiriesEntity enq= enqService.getEnq(id);
+		session.setAttribute("enq", enq);
+		session.setAttribute("enqid", id);
+		return "redirect:/enqu";
+	}
+
 }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

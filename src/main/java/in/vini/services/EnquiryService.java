@@ -25,4 +25,9 @@ public interface EnquiryService {
 
 	public List<StudentEnquiriesEntity> getFilteredEnquiries(EnquirySearchCriteria criteria,Integer userId);
 	
+	public StudentEnquiriesEntity getEnq(Integer enqId);
+	
+	public String updateEnq(Integer enqid, EnquiryForm formObj);
+	
+	
 }

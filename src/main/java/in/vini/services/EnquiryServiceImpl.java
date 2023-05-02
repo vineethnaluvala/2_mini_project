@@ -157,4 +157,31 @@ public class EnquiryServiceImpl implements EnquiryService {
 		return null;
 	}
 
+	public StudentEnquiriesEntity getEnq(Integer enqId)
+	{
+		Optional<StudentEnquiriesEntity> enq = studentRepo.findById(enqId);
+	     return enq.get();
+	}
+
+	
+	@Override
+	public String updateEnq(Integer enqid, EnquiryForm formObj) {
+		
+		Optional<StudentEnquiriesEntity> enq = studentRepo.findById(enqid);
+		if(enq.isPresent())
+		{
+			StudentEnquiriesEntity enqEntity = enq.get();
+			enqEntity.setStudentName(formObj.getStudentName());
+			enqEntity.setStudentPhno(formObj.getStudentPhno());
+			enqEntity.setClassMode(formObj.getClassMode());
+			enqEntity.setCourseName(formObj.getCourseName());
+			enqEntity.setEnqStatus(formObj.getEnqStatus());
+			
+			studentRepo.save(enqEntity);
+			return "Updated";
+		}
+		
+		return "Failed";
+	}
+
 }
