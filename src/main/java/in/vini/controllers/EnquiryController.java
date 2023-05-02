@@ -25,7 +25,6 @@ import in.vini.services.UserServiceImpl;
 @Controller
 public class EnquiryController {
 
-	
 	@Autowired
 	private EnquiryServiceImpl enqService;
 
@@ -66,13 +65,23 @@ public class EnquiryController {
 	@PostMapping("/enquiry")
 	public String addEnquiry(@ModelAttribute("form") EnquiryForm form, Model model) {
 
-		boolean status = enqService.upsertEnquiry(form);
+		//
 
-		if (status) {
-			model.addAttribute("msg", "data added succesfully");
+		if (session.getAttribute("enqid") != null) {
+			enqService.updateEnq((Integer) session.getAttribute("enqid"), form);
+			session.removeAttribute("enqid");
+			model.addAttribute("msg", "enquiry updated");
 		} else {
-			model.addAttribute("errMsg", "failed to add data");
+			
+			boolean status = enqService.upsertEnquiry(form);
+			if (status) {
+				model.addAttribute("msg", "data added succesfully");
+			} else {
+				model.addAttribute("errMsg", "failed to add data");
+			}
+			
 		}
+		
 
 		return "add-enquiry";
 	}
@@ -121,16 +130,14 @@ public class EnquiryController {
 	}
 
 	@GetMapping("/enqu")
-	public String enquiry(Model model)
-	{
+	public String enquiry(Model model) {
 		initForm(model);
-		EnquiryForm enqForm=new EnquiryForm();
-		if(session.getAttribute("enq")!=null)
-		{
-		   StudentEnquiriesEntity enq = (StudentEnquiriesEntity) session.getAttribute("enq");
-		   BeanUtils.copyProperties(enq,enqForm);
-		   session.removeAttribute("enq");
-		   
+		EnquiryForm enqForm = new EnquiryForm();
+		if (session.getAttribute("enq") != null) {
+			StudentEnquiriesEntity enq = (StudentEnquiriesEntity) session.getAttribute("enq");
+			BeanUtils.copyProperties(enq, enqForm);
+			session.removeAttribute("enq");
+
 		}
 		model.addAttribute("form", enqForm);
 		return "add-enquiry";
@@ -138,7 +145,7 @@ public class EnquiryController {
 
 	@GetMapping("/edit/{id}")
 	public String editEnquiry(@PathVariable("id") Integer id) {
-		 StudentEnquiriesEntity enq= enqService.getEnq(id);
+		StudentEnquiriesEntity enq = enqService.getEnq(id);
 		session.setAttribute("enq", enq);
 		session.setAttribute("enqid", id);
 		return "redirect:/enqu";
